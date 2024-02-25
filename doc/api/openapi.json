@@ -1,0 +1,2483 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Mavka Open API Specification",
+    "version": "0.0.1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Dev server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Endpoints related to user authentication"
+    },
+    {
+      "name": "Users",
+      "description": "Operations related to managing user data"
+    },
+    {
+      "name": "Chat",
+      "description": "Operations related to chat rooms memberships and messages"
+    },
+    {
+      "name": "Groups",
+      "description": "Operations related to chat rooms memberships and messages"
+    },
+    {
+      "name": "Posts",
+      "description": "Operations related to chat rooms memberships and messages"
+    },
+    {
+      "name": "Walls",
+      "description": "Operations related to walls"
+    }
+  ],
+  "paths": {
+    "/auth/registration": {
+      "post": {
+        "summary": "User registration endpoint",
+        "description": "This method adds a new user to the database",
+        "operationId": "authRegister",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "pass": {
+                    "type": "string"
+                  },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username",
+                  "email",
+                  "pass",
+                  "first_name",
+                  "last_name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful registration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "User registered"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body or missing fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "msg": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "message": "Registration error",
+                    "errors": [
+                      {
+                        "type": "field",
+                        "msg": "Password can not be empty",
+                        "path": "pass",
+                        "location": "body"
+                      },
+                      {
+                        "type": "field",
+                        "msg": "Password length is incorrect - must be 4 to 64 symbols",
+                        "path": "pass",
+                        "location": "body"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Username or email is already used",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "The username is already used"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "User login endpoint",
+        "description": "This method returns a token for authentication",
+        "operationId": "authLogin",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "pass": {
+                    "type": "string"
+                  }
+                },
+                "required": ["username", "pass"],
+                "example": {
+                  "username": "gervant",
+                  "pass": "1234"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body or missing fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "msg": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "message": "Login error",
+                    "errors": [
+                      {
+                        "type": "field",
+                        "msg": "Password can not be empty",
+                        "path": "pass",
+                        "location": "body"
+                      },
+                      {
+                        "type": "field",
+                        "msg": "Password length is incorrect - must be 4 to 64 symbols",
+                        "path": "pass",
+                        "location": "body"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Incorrect password"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{username}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get user data",
+        "description": "This method returns public information about a user",
+        "operationId": "getUser",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "Username of the user to retrieve information",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "wall_id": {
+                      "type": "integer"
+                    },
+                    "avatar_url": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "username": "gervant",
+                    "first_name": "Герольд",
+                    "last_name": "Ривский",
+                    "wall_id": 6,
+                    "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "User with username USERNAME does not exist"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Change user data",
+        "description": "This method returns public information about a user",
+        "operationId": "editUser",
+        "tags": ["Users"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "pass": {
+                    "type": "string"
+                  },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  }
+                },
+                "required": ["email", "pass", "first_name", "last_name"]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "Username of the user for updating",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "User updated successfully"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body or missing fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "msg": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "message": "Incorrect values error",
+                    "errors": [
+                      {
+                        "type": "field",
+                        "msg": "Password can not be empty",
+                        "path": "pass",
+                        "location": "body"
+                      },
+                      {
+                        "type": "field",
+                        "msg": "Password length is incorrect - must be 4 to 64 symbols",
+                        "path": "pass",
+                        "location": "body"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Can not access private information about another user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Access denied"
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email is already used",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "The email is already used"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Delete user",
+        "description": "This method deletes user",
+        "operationId": "deleteUser",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "Username of the user to delete",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "User deleted"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Can not delete another user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Access denied"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/private/{username}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get user private data",
+        "description": "This method returns private information about a user",
+        "operationId": "getUserPrivate",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "Username of the user to retrieve information",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "wall_id": {
+                      "type": "integer"
+                    },
+                    "avatar_url": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "username": "gervant",
+                    "email": "jeraltino@gmail.com",
+                    "first_name": "Герольд",
+                    "last_name": "Ривский",
+                    "wall_id": 6,
+                    "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Can not access private information about another user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Access denied"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chat/message/{room_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get messages from chat room",
+        "description": "This method returns messages from a chat room. By default page is 1 and page size is 10.",
+        "operationId": "loadChatMessages",
+        "tags": ["Chat"],
+        "parameters": [
+          {
+            "name": "room_id",
+            "in": "path",
+            "description": "Chat room id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page number",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "page size",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "username": {
+                        "type": "string"
+                      },
+                      "first_name": {
+                        "type": "string"
+                      },
+                      "last_name": {
+                        "type": "string"
+                      },
+                      "message_text": {
+                        "type": "string"
+                      },
+                      "avatar_url": {
+                        "type": "string"
+                      },
+                      "created_time": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": [
+                    {
+                      "username": "gervant",
+                      "first_name": "Герольд",
+                      "last_name": "Ривский",
+                      "message_text": "холера",
+                      "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg",
+                      "created_time": "2023-12-04T10:04:49.945Z"
+                    },
+                    {
+                      "username": "gervant",
+                      "first_name": "Герольд",
+                      "last_name": "Ривский",
+                      "message_text": "холера",
+                      "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg",
+                      "created_time": "2023-12-04T10:04:49.945Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not a chat member",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Access denied. Not a room member."
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Add new message",
+        "description": "This method returns adds new message from a user to a chat room.",
+        "operationId": "addChatMessage",
+        "tags": ["Chat"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message_text": {
+                    "type": "string"
+                  }
+                },
+                "required": ["message_text"]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "room_id",
+            "in": "path",
+            "description": "Chat room id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Success"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not a chat member",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Access denied. Not a room member."
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chat/newroom": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Create new room",
+        "description": "This method create a new chat room",
+        "operationId": "createChatRoom",
+        "tags": ["Chat"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "room_name": {
+                    "type": "string"
+                  }
+                },
+                "required": ["room_name"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "room_id": {
+                      "type": "integer"
+                    }
+                  },
+                  "example": {
+                    "room_id": 45
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body or missing fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "msg": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "message": "Incorrect values error",
+                    "errors": [
+                      {
+                        "type": "field",
+                        "msg": "Room name can not be empty",
+                        "path": "room_name",
+                        "location": "body"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chat/personal-message/{username}": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Add personal message",
+        "description": "This method creates a personal message to a user",
+        "operationId": "createPersonalMessage",
+        "tags": ["Chat"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "required": ["text"]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "username of a user whom to send the message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Success"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body or missing fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "msg": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "message": "Incorrect values error",
+                    "errors": [
+                      {
+                        "type": "field",
+                        "msg": "Mesage text can not be empty",
+                        "path": "message_text",
+                        "location": "body"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/groups": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get all groups",
+        "description": "This method returns a list of all groups",
+        "operationId": "getGroups",
+        "tags": ["Groups"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "group_id": {
+                        "type": "integer"
+                      },
+                      "group_name": {
+                        "type": "string"
+                      },
+                      "wall_id": {
+                        "type": "integer"
+                      },
+                      "avatar_url": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": [
+                    {
+                      "group_id": 6,
+                      "group_name": "TusaJusa",
+                      "wall_id": 49,
+                      "avatar_url": null
+                    },
+                    {
+                      "group_id": 6,
+                      "group_name": "TusaJusa",
+                      "wall_id": 49,
+                      "avatar_url": null
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Add a new group",
+        "description": "This method creates a new group",
+        "operationId": "createGroup",
+        "tags": ["Groups"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "group_name": {
+                    "type": "string"
+                  }
+                },
+                "required": ["group_name"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "group_id": {
+                      "type": "integer"
+                    },
+                    "group_name": {
+                      "type": "string"
+                    },
+                    "wall_id": {
+                      "type": "integer"
+                    }
+                  },
+                  "example": {
+                    "group_id": 18,
+                    "group_name": "Jusa2",
+                    "wall_id": 72
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/groups/{group_id}": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Join a group",
+        "description": "This method is for joining groups",
+        "operationId": "joinGroup",
+        "tags": ["Groups"],
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "description": "Group id to join",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Success"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/wall-post": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Add post to wall",
+        "description": "This method adds post to a wall. if a post is posted by group add group_id. Otherwise do not specify group_id and specify username.",
+        "operationId": "addWallPost",
+        "tags": ["Posts"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "group_id": {
+                    "type": "integer"
+                  },
+                  "wall_id": {
+                    "type": "integer"
+                  },
+                  "post_text": {
+                    "type": "string"
+                  }
+                },
+                "required": ["text"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Success"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "This user can not add posts to this wall",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Permission denied"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/wall-post/{wall_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get posts from wall",
+        "description": "This method returns posts from a wall",
+        "operationId": "getPostsFromWall",
+        "tags": ["Posts"],
+        "parameters": [
+          {
+            "name": "wall_id",
+            "in": "path",
+            "description": "ID of the wall to load posts from",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page number",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "page size",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "post_id": {
+                        "type": "integer"
+                      },
+                      "username": {
+                        "type": "string"
+                      },
+                      "avatar_url": {
+                        "type": "string"
+                      },
+                      "wall_id": {
+                        "type": "integer"
+                      },
+                      "post_text": {
+                        "type": "string"
+                      },
+                      "created_at": {
+                        "type": "text"
+                      }
+                    }
+                  },
+                  "example": [
+                    {
+                      "post_id": 6,
+                      "username": "gervant",
+                      "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg",
+                      "wall_id": 6,
+                      "post_text": "Хэллоу ворлд!",
+                      "created_at": "2024-01-19T11:24:44.886Z"
+                    },
+                    {
+                      "post_id": 5,
+                      "username": "gervant",
+                      "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg",
+                      "wall_id": 6,
+                      "post_text": "NEW POST TEXT",
+                      "created_at": "2024-01-19T10:50:26.441Z"
+                    },
+                    {
+                      "post_id": 4,
+                      "username": "gervant",
+                      "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg",
+                      "wall_id": 6,
+                      "post_text": "Я поймал и расколдовал стрыгу!!! :D",
+                      "created_at": "2024-01-19T10:50:26.441Z"
+                    },
+                    {
+                      "post_id": 3,
+                      "username": "gervant",
+                      "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg",
+                      "wall_id": 6,
+                      "post_text": "Я поймал и расколдовал стрыгу!!! :D",
+                      "created_at": "2024-01-19T10:50:26.441Z"
+                    },
+                    {
+                      "post_id": 2,
+                      "username": "gervant",
+                      "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg",
+                      "wall_id": 6,
+                      "post_text": "Я поймал и расколдовал стрыгу!!! :D",
+                      "created_at": "2024-01-19T10:50:26.441Z"
+                    },
+                    {
+                      "post_id": 1,
+                      "username": "gervant",
+                      "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg",
+                      "wall_id": 6,
+                      "post_text": "Я поймал и расколдовал стрыгу!!! :D",
+                      "created_at": "2024-01-19T10:50:26.441Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/news": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get news",
+        "description": "This method returns recomended posts",
+        "operationId": "getNews",
+        "tags": ["Posts"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "post_id": {
+                        "type": "integer"
+                      },
+                      "username": {
+                        "type": "string"
+                      },
+                      "avatar_url": {
+                        "type": "string"
+                      },
+                      "wall_id": {
+                        "type": "integer"
+                      },
+                      "post_text": {
+                        "type": "string"
+                      },
+                      "created_at": {
+                        "type": "text"
+                      }
+                    }
+                  },
+                  "example": [
+                    {
+                      "post_id": 6,
+                      "username": "gervant",
+                      "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg",
+                      "wall_id": 6,
+                      "post_text": "Хэллоу ворлд!",
+                      "created_at": "2024-01-19T11:24:44.886Z"
+                    },
+                    {
+                      "post_id": 5,
+                      "username": "gervant",
+                      "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg",
+                      "wall_id": 6,
+                      "post_text": "NEW POST TEXT",
+                      "created_at": "2024-01-19T10:50:26.441Z"
+                    },
+                    {
+                      "post_id": 4,
+                      "username": "gervant",
+                      "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg",
+                      "wall_id": 6,
+                      "post_text": "Я поймал и расколдовал стрыгу!!! :D",
+                      "created_at": "2024-01-19T10:50:26.441Z"
+                    },
+                    {
+                      "post_id": 3,
+                      "username": "gervant",
+                      "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg",
+                      "wall_id": 6,
+                      "post_text": "Я поймал и расколдовал стрыгу!!! :D",
+                      "created_at": "2024-01-19T10:50:26.441Z"
+                    },
+                    {
+                      "post_id": 2,
+                      "username": "gervant",
+                      "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg",
+                      "wall_id": 6,
+                      "post_text": "Я поймал и расколдовал стрыгу!!! :D",
+                      "created_at": "2024-01-19T10:50:26.441Z"
+                    },
+                    {
+                      "post_id": 1,
+                      "username": "gervant",
+                      "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg",
+                      "wall_id": 6,
+                      "post_text": "Я поймал и расколдовал стрыгу!!! :D",
+                      "created_at": "2024-01-19T10:50:26.441Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/single-post/{post_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get post by id",
+        "description": "This method returns post by id",
+        "operationId": "getPostsById",
+        "tags": ["Posts"],
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "post id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "post_id": {
+                      "type": "integer"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "avatar_url": {
+                      "type": "string"
+                    },
+                    "wall_id": {
+                      "type": "integer"
+                    },
+                    "post_text": {
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "type": "text"
+                    }
+                  },
+                  "example": {
+                    "post_id": 6,
+                    "username": "gervant",
+                    "avatar_url": "https://i.ibb.co/t33h8S6/witcher.jpg",
+                    "wall_id": 6,
+                    "post_text": "Хэллоу ворлд!",
+                    "created_at": "2024-01-19T11:24:44.886Z"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Post not found"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/walls/group-walls": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get all group walls",
+        "description": "This method returns a list of all group walls",
+        "operationId": "getGroupWalls",
+        "tags": ["Walls"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "wall_id": {
+                        "type": "integer"
+                      },
+                      "wall_group_id": {
+                        "type": "integer"
+                      },
+                      "wall_img": {
+                        "type": "integer"
+                      },
+                      "wall_title": {
+                        "type": "string"
+                      },
+                      "wall_theme": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": [
+                    {
+                      "wall_id": 61,
+                      "wall_group_id": 7,
+                      "wall_img": "https://i.ibb.co/KVwYr15/327893448828.webp",
+                      "wall_title": "This is wall title",
+                      "wall_theme": "GAMES"
+                    },
+                    {
+                      "wall_id": 62,
+                      "wall_group_id": 8,
+                      "wall_img": "https://i.ibb.co/KVwYr15/327893448828.webp",
+                      "wall_title": "This is wall title",
+                      "wall_theme": "GAMES"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/walls/search-walls": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get all walls with the theme and title starting with title",
+        "description": "This method returns a list group walls filtered by themes and title",
+        "operationId": "searchGroupWalls",
+        "tags": ["Walls"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "theme": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                },
+                "required": ["theme", "title"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "wall_id": {
+                        "type": "integer"
+                      },
+                      "wall_group_id": {
+                        "type": "integer"
+                      },
+                      "wall_img": {
+                        "type": "integer"
+                      },
+                      "wall_title": {
+                        "type": "string"
+                      },
+                      "wall_theme": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": [
+                    {
+                      "wall_id": 61,
+                      "wall_group_id": 7,
+                      "wall_img": "https://i.ibb.co/KVwYr15/327893448828.webp",
+                      "wall_title": "This is wall title",
+                      "wall_theme": "GAMES"
+                    },
+                    {
+                      "wall_id": 62,
+                      "wall_group_id": 8,
+                      "wall_img": "https://i.ibb.co/KVwYr15/327893448828.webp",
+                      "wall_title": "This is wall title",
+                      "wall_theme": "GAMES"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/walls/wall-themes": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get wall thiemes",
+        "description": "This method returns a list of all wall themes",
+        "operationId": "getWallThemes",
+        "tags": ["Walls"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "themes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "themes": [
+                    "Юмор",
+                    "Спорт",
+                    "Игры",
+                    "Еда",
+                    "Музыка",
+                    "Фотография",
+                    "Финансы",
+                    "Информационные технологии",
+                    "Кино",
+                    "Наука"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}
